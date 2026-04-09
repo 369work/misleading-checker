@@ -1,0 +1,102 @@
+# yakki-checker
+
+薬機法（医薬品医療機器等法）・景品表示法のNG表現を検出するPHPライブラリ。
+
+記事やLPの入稿前チェック、制作会社やライターへの納品前品質管理に使えます。
+
+## 特徴
+
+- 薬機法・景品表示法のNG表現を自動検出
+- 検出位置・理由・代替表現の提案付き
+- 業種別プリセット（化粧品・サプリ・医療機器）
+- カスタム辞書の追加対応
+- JSON / 配列でのエクスポート
+- フレームワーク非依存（WordPress / Laravel / CakePHP 等どこでも使える）
+
+## 要件
+
+- PHP 8.1 以上
+- ext-mbstring
+
+## インストール
+
+```bash
+composer require 369work/yakki-checker
+```
+
+## 基本的な使い方
+
+```php
+use Yakki\YakkiChecker;
+
+$checker = new YakkiChecker();
+$result = $checker->check('この商品は必ず治る！今だけ半額');
+
+if ($result->hasViolations()) {
+    foreach ($result->getViolations() as $v) {
+        echo "❌ {$v->word}: {$v->reason}\n";
+        echo "   → 提案: {$v->suggestion}\n";
+    }
+}
+```
+
+## 業種別プリセット
+
+```php
+use Yakki\Preset\CosmeticsPreset;
+use Yakki\Preset\SupplementPreset;
+use Yakki\Preset\MedicalDevicePreset;
+
+// 化粧品向けチェック
+$checker->applyPreset(new CosmeticsPreset());
+
+// サプリメント向けチェック
+$checker->applyPreset(new SupplementPreset());
+
+// 医療機器向けチェック
+$checker->applyPreset(new MedicalDevicePreset());
+```
+
+## カスタム辞書
+
+```php
+use Yakki\Dictionary\CustomDictionary;
+
+$custom = new CustomDictionary('自社ルール');
+$custom->addEntry('当社比', '比較対象を明確にしてください', '具体的な数値で比較');
+
+$checker->addDictionary($custom);
+```
+
+### JSONから辞書を読み込む
+
+```php
+$json = file_get_contents('my-dictionary.json');
+$dict = CustomDictionary::fromJSON($json, 'カスタム');
+$checker->addDictionary($dict);
+```
+
+## 出力
+
+```php
+// 配列
+$result->toArray();
+
+// JSON
+$result->toJSON(JSON_PRETTY_PRINT);
+
+// カテゴリ別に集計
+$result->groupByCategory();
+```
+
+## テスト
+
+```bash
+composer test
+```
+
+## ライセンス
+
+GPL-3.0-or-later
+
+Copyright (c) 2025 miroku (369work)
