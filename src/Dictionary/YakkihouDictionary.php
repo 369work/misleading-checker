@@ -32,6 +32,11 @@ class YakkihouDictionary implements DictionaryInterface
                 'suggestion' => '個人差があります',
             ],
             [
+                'pattern'    => '効果が',
+                'reason'     => '「効果があります」「効果が出る」など、食品・化粧品等で効果を示す表現は薬機法で禁止されています',
+                'suggestion' => '毎日の習慣に / 使用感には個人差があります',
+            ],
+            [
                 'pattern'    => '100%効く',
                 'reason'     => '効果の確率を保証する表現は禁止されています',
                 'suggestion' => '多くの方にご満足いただいています',
@@ -52,7 +57,23 @@ class YakkihouDictionary implements DictionaryInterface
                 'suggestion' => '嬉しい変化 / 実感',
             ],
 
+            [
+                'pattern'    => '治る',
+                'reason'     => '医薬品でない製品に「治る」は使用できません',
+                'suggestion' => '整える / ケアする / サポートする',
+            ],
+            [
+                'pattern'    => '治ります',
+                'reason'     => '医薬品でない製品に「治ります」は使用できません',
+                'suggestion' => '整えます / ケアします',
+            ],
+
             // === 医薬品的な効能表現 ===
+            [
+                'pattern'    => '改善',
+                'reason'     => '食品・化粧品等で症状や疾病の「改善」を訴求することは薬機法で禁止されています',
+                'suggestion' => 'サポート / 整える / ケア',
+            ],
             [
                 'pattern'    => '治療',
                 'reason'     => '医薬品でない製品に「治療」は使用できません',

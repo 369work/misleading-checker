@@ -6,17 +6,21 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use MisleadingChecker\Preset\CosmeticsPreset;
 use MisleadingChecker\Preset\MedicalDevicePreset;
-use MisleadingChecker\Preset\SupplementPreset;
+use MisleadingChecker\Preset\GeneralSupplementPreset;
+use MisleadingChecker\Preset\FunctionalFoodPreset;
+use MisleadingChecker\Preset\TokuhoPreset;
 use MisleadingChecker\MisleadingChecker;
 
-$inputText   = '';
-$result      = null;
-$presets     = [];
-$errorMsg    = '';
+$inputText      = '';
+$result         = null;
+$presets        = [];
+$supplementType = '';
+$errorMsg       = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $inputText = $_POST['text'] ?? '';
-    $presets   = $_POST['presets'] ?? [];
+    $inputText      = $_POST['text'] ?? '';
+    $presets        = $_POST['presets'] ?? [];
+    $supplementType = $_POST['supplement_type'] ?? '';
 
     if ($inputText !== '') {
         $checker = new MisleadingChecker();
@@ -24,9 +28,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (in_array('cosmetics', $presets, true)) {
             $checker->applyPreset(new CosmeticsPreset());
         }
-        if (in_array('supplement', $presets, true)) {
-            $checker->applyPreset(new SupplementPreset());
+
+        switch ($supplementType) {
+            case 'general':
+                $checker->applyPreset(new GeneralSupplementPreset());
+                break;
+            case 'functional':
+                $checker->applyPreset(new FunctionalFoodPreset());
+                break;
+            case 'tokuho':
+                $checker->applyPreset(new TokuhoPreset());
+                break;
         }
+
         if (in_array('medical_device', $presets, true)) {
             $checker->applyPreset(new MedicalDevicePreset());
         }
@@ -64,8 +78,6 @@ function highlightViolations(string $text, array $violations): string
             . $after;
     }
 
-    // ハイライト外のテキストだけエスケープ
-    // （markタグ内は既にエスケープ済み）
     $parts = preg_split('/(<mark[^>]*>.*?<\/mark>)/us', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
     $output = '';
     foreach ($parts as $part) {
@@ -80,21 +92,25 @@ function highlightViolations(string $text, array $violations): string
 }
 
 $categoryLabels = [
-    'yakki'          => '薬機法',
-    'keihin'         => '景品表示法',
-    'cosmetics'      => '化粧品',
-    'supplement'     => 'サプリメント',
-    'medical_device' => '医療機器',
-    'custom'         => 'カスタム',
+    'yakki'                => '薬機法',
+    'keihin'               => '景品表示法',
+    'cosmetics'            => '化粧品',
+    'supplement_general'   => '一般健康食品',
+    'supplement_functional'=> '機能性表示食品',
+    'supplement_tokuho'    => 'トクホ',
+    'medical_device'       => '医療機器',
+    'custom'               => 'カスタム',
 ];
 
 $categoryColors = [
-    'yakki'          => 'bg-red-100 text-red-800 border-red-300',
-    'keihin'         => 'bg-amber-100 text-amber-800 border-amber-300',
-    'cosmetics'      => 'bg-pink-100 text-pink-800 border-pink-300',
-    'supplement'     => 'bg-green-100 text-green-800 border-green-300',
-    'medical_device' => 'bg-purple-100 text-purple-800 border-purple-300',
-    'custom'         => 'bg-gray-100 text-gray-800 border-gray-300',
+    'yakki'                => 'bg-red-100 text-red-800 border-red-300',
+    'keihin'               => 'bg-amber-100 text-amber-800 border-amber-300',
+    'cosmetics'            => 'bg-pink-100 text-pink-800 border-pink-300',
+    'supplement_general'   => 'bg-green-100 text-green-800 border-green-300',
+    'supplement_functional'=> 'bg-teal-100 text-teal-800 border-teal-300',
+    'supplement_tokuho'    => 'bg-cyan-100 text-cyan-800 border-cyan-300',
+    'medical_device'       => 'bg-purple-100 text-purple-800 border-purple-300',
+    'custom'               => 'bg-gray-100 text-gray-800 border-gray-300',
 ];
 ?>
 <!DOCTYPE html>
@@ -125,13 +141,29 @@ $categoryColors = [
             background-color: #FCE7F3;
             border-bottom-color: #EC4899;
         }
-        .yakki-highlight[data-category="supplement"] {
+        .yakki-highlight[data-category="supplement_general"] {
             background-color: #D1FAE5;
             border-bottom-color: #10B981;
+        }
+        .yakki-highlight[data-category="supplement_functional"] {
+            background-color: #CCFBF1;
+            border-bottom-color: #14B8A6;
+        }
+        .yakki-highlight[data-category="supplement_tokuho"] {
+            background-color: #CFFAFE;
+            border-bottom-color: #06B6D4;
         }
         .yakki-highlight[data-category="medical_device"] {
             background-color: #EDE9FE;
             border-bottom-color: #8B5CF6;
+        }
+        /* サプリラジオボタンエリアのアニメーション */
+        #supplement-options {
+            transition: opacity 0.2s ease;
+        }
+        #supplement-options.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -165,26 +197,73 @@ $categoryColors = [
 
             <!-- プリセット選択 -->
             <fieldset>
-                <legend class="block text-sm font-medium text-gray-700 mb-2">業種別プリセット（任意）</legend>
-                <div class="flex flex-wrap gap-4">
+                <legend class="block text-sm font-medium text-gray-700 mb-3">業種別プリセット（任意）</legend>
+                <div class="space-y-4">
+
+                    <!-- 化粧品 -->
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" name="presets[]" value="cosmetics"
                             class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                             <?= in_array('cosmetics', $presets) ? 'checked' : '' ?>>
                         <span class="text-sm text-gray-700">化粧品</span>
                     </label>
-                    <label class="inline-flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="presets[]" value="supplement"
-                            class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                            <?= in_array('supplement', $presets) ? 'checked' : '' ?>>
-                        <span class="text-sm text-gray-700">サプリメント</span>
-                    </label>
+
+                    <!-- サプリメント・健康食品（チェックボックス＋ラジオボタン） -->
+                    <div>
+                        <label class="inline-flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="supplement-toggle"
+                                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                <?= $supplementType !== '' ? 'checked' : '' ?>>
+                            <span class="text-sm text-gray-700">サプリメント・健康食品</span>
+                        </label>
+
+                        <!-- サプリ区分ラジオボタン -->
+                        <div id="supplement-options"
+                            class="mt-2 ml-6 p-3 bg-white border border-gray-200 rounded-lg space-y-2 <?= $supplementType === '' ? 'hidden' : '' ?>"
+                            role="group"
+                            aria-label="健康食品の区分">
+                            <p class="text-xs text-gray-500 mb-2">区分を選択してください（区分によってNGパターンが異なります）</p>
+
+                            <label class="flex items-start gap-2 cursor-pointer">
+                                <input type="radio" name="supplement_type" value="general"
+                                    class="mt-0.5 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                    <?= $supplementType === 'general' ? 'checked' : '' ?>>
+                                <span class="text-sm">
+                                    <span class="font-medium text-gray-800">一般健康食品・サプリメント</span>
+                                    <span class="block text-xs text-gray-500">機能性表示・トクホの届出なし。効果・効能の訴求は原則すべてNG</span>
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-2 cursor-pointer">
+                                <input type="radio" name="supplement_type" value="functional"
+                                    class="mt-0.5 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                    <?= $supplementType === 'functional' ? 'checked' : '' ?>>
+                                <span class="text-sm">
+                                    <span class="font-medium text-gray-800">機能性表示食品</span>
+                                    <span class="block text-xs text-gray-500">消費者庁への届出済み。届出した機能性の範囲内はOK、疾病治療予防はNG</span>
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-2 cursor-pointer">
+                                <input type="radio" name="supplement_type" value="tokuho"
+                                    class="mt-0.5 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                    <?= $supplementType === 'tokuho' ? 'checked' : '' ?>>
+                                <span class="text-sm">
+                                    <span class="font-medium text-gray-800">特定保健用食品（トクホ）</span>
+                                    <span class="block text-xs text-gray-500">消費者庁の個別許可済み。許可を受けた保健用途の表示はOK、疾病治療予防はNG</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 医療機器 -->
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" name="presets[]" value="medical_device"
                             class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                             <?= in_array('medical_device', $presets) ? 'checked' : '' ?>>
                         <span class="text-sm text-gray-700">医療機器</span>
                     </label>
+
                 </div>
             </fieldset>
 
@@ -235,7 +314,7 @@ $categoryColors = [
                     <div>
                         <h2 class="text-sm font-medium text-gray-700 mb-2">検出一覧</h2>
                         <div class="space-y-3">
-                            <?php foreach ($result->getViolations() as $i => $v): ?>
+                            <?php foreach ($result->getViolations() as $v): ?>
                                 <?php
                                     $catLabel = $categoryLabels[$v->category] ?? $v->category;
                                     $catColor = $categoryColors[$v->category] ?? $categoryColors['custom'];
@@ -275,5 +354,25 @@ $categoryColors = [
             </p>
         </div>
     </footer>
+
+    <script>
+        // サプリチェックボックスでラジオボタンエリアの表示切替
+        const toggle  = document.getElementById('supplement-toggle');
+        const options = document.getElementById('supplement-options');
+        const radios  = options.querySelectorAll('input[type="radio"]');
+
+        toggle.addEventListener('change', function () {
+            if (this.checked) {
+                options.classList.remove('hidden');
+                // 未選択なら最初のラジオをデフォルト選択
+                const anyChecked = Array.from(radios).some(r => r.checked);
+                if (!anyChecked) radios[0].checked = true;
+            } else {
+                options.classList.add('hidden');
+                // チェックを外したらラジオもリセット
+                radios.forEach(r => r.checked = false);
+            }
+        });
+    </script>
 </body>
 </html>
