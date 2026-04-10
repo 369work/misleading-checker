@@ -1,15 +1,16 @@
 {
-    "name": "369work/yakki-checker",
+    "name": "369work/misleading-checker",
     "description": "薬機法・景品表示法のNG表現を検出するPHPライブラリ。記事やLPの入稿前チェック、納品前の品質管理に。",
     "type": "library",
     "keywords": [
-        "yakki",
-        "薬機法",
-        "景品表示法",
-        "compliance",
-        "ng-word",
-        "checker",
-        "php"
+    	"yakki",
+    	"薬機法",
+    	"景品表示法",
+    	"compliance",
+    	"ng-word",
+    	"misleading",
+    	"checker",
+    	"php"
     ],
     "license": "GPL-3.0-or-later",
     "require": {
