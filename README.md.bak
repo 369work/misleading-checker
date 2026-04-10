@@ -1,4 +1,4 @@
-# misleading-checker
+# yakki-checker
 
 薬機法（医薬品医療機器等法）・景品表示法のNG表現を検出するPHPライブラリ。
 
@@ -21,15 +21,15 @@
 ## インストール
 
 ```bash
-composer require 369work/misleading-checker
+composer require 369work/yakki-checker
 ```
 
 ## 基本的な使い方
 
 ```php
-use MisleadingChecker\MisleadingChecker;
+use Yakki\YakkiChecker;
 
-$checker = new MisleadingChecker();
+$checker = new YakkiChecker();
 $result = $checker->check('この商品は必ず治る！今だけ半額');
 
 if ($result->hasViolations()) {
@@ -43,9 +43,9 @@ if ($result->hasViolations()) {
 ## 業種別プリセット
 
 ```php
-use MisleadingChecker\Preset\CosmeticsPreset;
-use MisleadingChecker\Preset\SupplementPreset;
-use MisleadingChecker\Preset\MedicalDevicePreset;
+use Yakki\Preset\CosmeticsPreset;
+use Yakki\Preset\SupplementPreset;
+use Yakki\Preset\MedicalDevicePreset;
 
 // 化粧品向けチェック
 $checker->applyPreset(new CosmeticsPreset());
@@ -60,7 +60,7 @@ $checker->applyPreset(new MedicalDevicePreset());
 ## カスタム辞書
 
 ```php
-use MisleadingChecker\Dictionary\CustomDictionary;
+use Yakki\Dictionary\CustomDictionary;
 
 $custom = new CustomDictionary('自社ルール');
 $custom->addEntry('当社比', '比較対象を明確にしてください', '具体的な数値で比較');

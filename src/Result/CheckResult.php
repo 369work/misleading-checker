@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yakki\Result;
+namespace MisleadingChecker\Result;
 
 /**
  * チェック結果全体を保持するクラス

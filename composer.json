@@ -22,12 +22,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Yakki\\": "src/"
+            "MisleadingChecker\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Yakki\\Tests\\": "tests/"
+            "MisleadingChecker\\Tests\\": "tests/"
         }
     },
     "scripts": {

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Yakki\Preset\CosmeticsPreset;
-use Yakki\YakkiChecker;
+use MisleadingChecker\Preset\CosmeticsPreset;
+use MisleadingChecker\MisleadingChecker;
 
 // ============================================================
 // 基本的な使い方
 // ============================================================
 
-$checker = new YakkiChecker();
+$checker = new MisleadingChecker();
 
 $text = <<<TEXT
 【期間限定】奇跡の美容液が今だけ半額！

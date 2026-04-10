@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yakki\Result;
+namespace MisleadingChecker\Result;
 
 /**
  * NG表現の検出結果（1件分）

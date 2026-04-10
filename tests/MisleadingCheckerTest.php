@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Yakki\Tests;
+namespace MisleadingChecker\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Yakki\Dictionary\CustomDictionary;
-use Yakki\Preset\CosmeticsPreset;
-use Yakki\Preset\SupplementPreset;
-use Yakki\YakkiChecker;
+use MisleadingChecker\Dictionary\CustomDictionary;
+use MisleadingChecker\Preset\CosmeticsPreset;
+use MisleadingChecker\Preset\SupplementPreset;
+use MisleadingChecker\MisleadingChecker;
 
-class YakkiCheckerTest extends TestCase
+class MisleadingCheckerTest extends TestCase
 {
-    private YakkiChecker $checker;
+    private MisleadingChecker $checker;
 
     protected function setUp(): void
     {
-        $this->checker = new YakkiChecker();
+        $this->checker = new MisleadingChecker();
     }
 
     public function testDetectsYakkihouViolation(): void
     {
-        $result = $this->checker->check('この商品は必ず治ります');
+        $result = $this->checker->check('この商品は必ず治る');
         $this->assertTrue($result->hasViolations());
 
         $words = array_map(fn($v) => $v->word, $result->getViolations());
@@ -60,7 +60,7 @@ class YakkiCheckerTest extends TestCase
         $custom = new CustomDictionary('social');
         $custom->addEntry('バズる', 'SNS上の誇大表現', '話題になる');
 
-        $checker = new YakkiChecker(['load_defaults' => false]);
+        $checker = new MisleadingChecker(['load_defaults' => false]);
         $checker->addDictionary($custom);
 
         $result = $checker->check('この投稿はバズること間違いなし');
@@ -114,7 +114,7 @@ class YakkiCheckerTest extends TestCase
 
     public function testEmptyTextThrowsException(): void
     {
-        $this->expectException(\Yakki\Exception\InvalidArgumentException::class);
+        $this->expectException(\MisleadingChecker\Exception\InvalidArgumentException::class);
         $this->checker->check('');
     }
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Yakki\Preset;
+namespace MisleadingChecker\Preset;
 
-use Yakki\Dictionary\DictionaryInterface;
+use MisleadingChecker\Dictionary\DictionaryInterface;
 
 /**
  * 業種別プリセットのインターフェース

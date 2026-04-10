@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Yakki\Dictionary;
+namespace MisleadingChecker\Dictionary;
 
-use Yakki\Exception\InvalidArgumentException;
+use MisleadingChecker\Exception\InvalidArgumentException;
 
 /**
  * カスタムNG辞書

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Yakki\Preset\CosmeticsPreset;
-use Yakki\Preset\MedicalDevicePreset;
-use Yakki\Preset\SupplementPreset;
-use Yakki\YakkiChecker;
+use MisleadingChecker\Preset\CosmeticsPreset;
+use MisleadingChecker\Preset\MedicalDevicePreset;
+use MisleadingChecker\Preset\SupplementPreset;
+use MisleadingChecker\MisleadingChecker;
 
 $inputText   = '';
 $result      = null;
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $presets   = $_POST['presets'] ?? [];
 
     if ($inputText !== '') {
-        $checker = new YakkiChecker();
+        $checker = new MisleadingChecker();
 
         if (in_array('cosmetics', $presets, true)) {
             $checker->applyPreset(new CosmeticsPreset());
@@ -102,7 +102,7 @@ $categoryColors = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>yakki-checker - 薬機法・景品表示法チェッカー</title>
+    <title>misleading-checker - 薬機法・景品表示法チェッカー</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -139,7 +139,7 @@ $categoryColors = [
     <header class="bg-white border-b border-gray-200">
         <div class="max-w-4xl mx-auto px-4 py-6">
             <h1 class="text-2xl font-bold text-gray-900">
-                <span class="font-mono text-indigo-600">yakki-checker</span>
+                <span class="font-mono text-indigo-600">misleading-checker</span>
             </h1>
             <p class="mt-1 text-sm text-gray-500">薬機法・景品表示法のNG表現を検出するチェッカー</p>
         </div>

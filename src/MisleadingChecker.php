@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Yakki;
+namespace MisleadingChecker;
 
-use Yakki\Dictionary\DictionaryInterface;
-use Yakki\Dictionary\KeihinDictionary;
-use Yakki\Dictionary\YakkihouDictionary;
-use Yakki\Exception\InvalidArgumentException;
-use Yakki\Preset\PresetInterface;
-use Yakki\Result\CheckResult;
-use Yakki\Result\Violation;
+use MisleadingChecker\Dictionary\DictionaryInterface;
+use MisleadingChecker\Dictionary\KeihinDictionary;
+use MisleadingChecker\Dictionary\YakkihouDictionary;
+use MisleadingChecker\Exception\InvalidArgumentException;
+use MisleadingChecker\Preset\PresetInterface;
+use MisleadingChecker\Result\CheckResult;
+use MisleadingChecker\Result\Violation;
 
 /**
  * 薬機法・景品表示法チェッカー
@@ -19,7 +19,7 @@ use Yakki\Result\Violation;
  *
  * @example
  * ```php
- * $checker = new YakkiChecker();
+ * $checker = new MisleadingChecker();
  * $result = $checker->check('この商品は必ず治ります！今だけ半額！');
  *
  * if ($result->hasViolations()) {
@@ -29,7 +29,7 @@ use Yakki\Result\Violation;
  * }
  * ```
  */
-class YakkiChecker
+class MisleadingChecker
 {
     /** @var DictionaryInterface[] */
     private array $dictionaries = [];

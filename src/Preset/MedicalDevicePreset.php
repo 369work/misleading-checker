@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yakki\Preset;
+namespace MisleadingChecker\Preset;
 
-use Yakki\Dictionary\CustomDictionary;
-use Yakki\Dictionary\DictionaryInterface;
+use MisleadingChecker\Dictionary\CustomDictionary;
+use MisleadingChecker\Dictionary\DictionaryInterface;
 
 /**
  * 医療機器・美容機器業界向けプリセット

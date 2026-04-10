@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yakki\Dictionary;
+namespace MisleadingChecker\Dictionary;
 
 /**
  * NG表現辞書のインターフェース

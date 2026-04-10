@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yakki\Dictionary;
+namespace MisleadingChecker\Dictionary;
 
 /**
  * 景品表示法NGワード辞書

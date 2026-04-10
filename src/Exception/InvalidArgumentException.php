@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yakki\Exception;
+namespace MisleadingChecker\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException
 {
